@@ -3,36 +3,134 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : home.js
 Versión  : v0.1.0
-Build    : 008
+Build    : 012
 Autor    : Carlos & ChatGPT
 ======================================
 */
-
-import { crearHeader } from "../components/header.js";
-import { crearBoton } from "../components/button.js";
 
 export function mostrarInicio() {
 
     const app = document.getElementById("app");
 
     app.innerHTML = `
-        ${crearHeader("📖 Himnario Cristiano")}
 
-        <main class="home">
+    <div class="home-page">
 
-            <p>Versión 0.1.0</p>
+        <!-- ========================= -->
+        <!-- HEADER                    -->
+        <!-- ========================= -->
 
-            ${crearBoton("🔍 Buscar Himno", "btnBuscar")}
+        <header class="hero">
 
-            ${crearBoton("📚 Todos los Himnos", "btnHimnos")}
+            <div class="hero-logo">
 
-            ${crearBoton("⭐ Favoritos", "btnFavoritos")}
+                📖
 
-            ${crearBoton("⚙ Configuración", "btnConfiguracion")}
+            </div>
 
-        </main>
+            <h1>
+
+                Himnario Cristiano
+
+            </h1>
+
+            <p>
+
+                "Todo lo que respira alabe a Jehová"
+
+            </p>
+
+        </header>
+
+
+        <!-- ========================= -->
+        <!-- BUSCADOR                  -->
+        <!-- ========================= -->
+
+        <section class="search-box">
+
+            <input
+                type="text"
+                placeholder="Buscar un himno..."
+            >
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- ACCESOS RÁPIDOS           -->
+        <!-- ========================= -->
+
+        <section class="quick-actions">
+
+            <button>
+
+                📚
+
+                <span>
+
+                    Todos los Himnos
+
+                </span>
+
+            </button>
+
+
+            <button>
+
+                ⭐
+
+                <span>
+
+                    Favoritos
+
+                </span>
+
+            </button>
+
+
+            <button>
+
+                🕘
+
+                <span>
+
+                    Recientes
+
+                </span>
+
+            </button>
+
+
+            <button>
+
+                ⚙
+
+                <span>
+
+                    Ajustes
+
+                </span>
+
+            </button>
+
+        </section>
+
+
+        <!-- ========================= -->
+        <!-- FOOTER                    -->
+        <!-- ========================= -->
+
+        <footer>
+
+            Versión 0.1.0
+
+        </footer>
+
+    </div>
+
     `;
 
 }
 
-// Fin del archivo home.js
+// Fin del archivo
