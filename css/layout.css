@@ -3,10 +3,20 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : layout.css
 Versión  : v0.1.0
-Build    : 011
+Build    : 013
 Autor    : Carlos & ChatGPT
 ======================================
 */
+
+body{
+
+    background:var(--background);
+
+    font-family:var(--font-family);
+
+    color:var(--text);
+
+}
 
 #app{
 
@@ -14,44 +24,14 @@ Autor    : Carlos & ChatGPT
 
     min-height:100vh;
 
-    display:flex;
-
-    flex-direction:column;
-
 }
 
-.home{
-
-    flex:1;
+.home-page{
 
     display:flex;
 
     flex-direction:column;
 
-    padding:24px;
-
-    gap:16px;
+    min-height:100vh;
 
 }
-
-.app-header{
-
-    background:var(--primary);
-
-    color:white;
-
-    padding:22px;
-
-    text-align:center;
-
-    box-shadow:var(--shadow);
-
-}
-
-.app-header h1{
-
-    font-size:var(--font-title);
-
-}
-
-/* Fin del archivo */
