@@ -1,1 +1,37 @@
+/*
+======================================
+Proyecto : Himnario Cristiano Offline
+Archivo  : components.css
+Versión  : v0.1.0
+Build    : 011
+Autor    : Carlos & ChatGPT
+======================================
+*/
 
+.app-button{
+
+    width:100%;
+
+    background:var(--primary);
+
+    color:white;
+
+    padding:16px;
+
+    border-radius:var(--radius-md);
+
+    font-size:18px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.app-button:active{
+
+    transform:scale(.98);
+
+}
+
+/* Fin del archivo */
