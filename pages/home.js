@@ -3,12 +3,13 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : home.js
 Versión  : v0.1.0
-Build    : 007
+Build    : 008
 Autor    : Carlos & ChatGPT
 ======================================
 */
 
 import { crearHeader } from "../components/header.js";
+import { crearBoton } from "../components/button.js";
 
 export function mostrarInicio() {
 
@@ -21,13 +22,13 @@ export function mostrarInicio() {
 
             <p>Versión 0.1.0</p>
 
-            <button>Buscar Himno</button>
+            ${crearBoton("🔍 Buscar Himno", "btnBuscar")}
 
-            <button>Todos los Himnos</button>
+            ${crearBoton("📚 Todos los Himnos", "btnHimnos")}
 
-            <button>Favoritos</button>
+            ${crearBoton("⭐ Favoritos", "btnFavoritos")}
 
-            <button>Configuración</button>
+            ${crearBoton("⚙ Configuración", "btnConfiguracion")}
 
         </main>
     `;
