@@ -3,7 +3,7 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : home.js
 Versión  : v0.1.0
-Build    : 012
+Build    : 014
 Autor    : Carlos & ChatGPT
 ======================================
 */
@@ -17,115 +17,179 @@ export function mostrarInicio() {
     <div class="home-page">
 
         <!-- ========================= -->
-        <!-- HEADER                    -->
+        <!-- HERO -->
         <!-- ========================= -->
 
         <header class="hero">
 
             <div class="hero-logo">
-
-                📖
-
+                HC
             </div>
 
-            <h1>
-
+            <h1 class="hero-title">
                 Himnario Cristiano
-
             </h1>
 
-            <p>
-
-                "Todo lo que respira alabe a Jehová"
-
+            <p class="hero-subtitle">
+                Todo lo que respira alabe a Jehová
             </p>
 
         </header>
 
-
         <!-- ========================= -->
-        <!-- BUSCADOR                  -->
+        <!-- BUSCADOR -->
         <!-- ========================= -->
 
-        <section class="search-box">
+        <section class="search-section">
 
-            <input
-                type="text"
-                placeholder="Buscar un himno..."
-            >
+            <div class="search-box">
+
+                <span class="search-icon">🔍</span>
+
+                <input
+                    type="text"
+                    placeholder="Buscar un himno..."
+                >
+
+            </div>
 
         </section>
 
+        <!-- ========================= -->
+        <!-- ACCESOS -->
+        <!-- ========================= -->
+
+        <section class="cards">
+
+            <article class="card">
+
+                <div class="card-icon">
+                    📖
+                </div>
+
+                <div class="card-content">
+
+                    <h2>Todos los Himnos</h2>
+
+                    <p>
+                        Explora todo el himnario.
+                    </p>
+
+                </div>
+
+                <div class="card-arrow">
+                    ›
+                </div>
+
+            </article>
+
+            <article class="card">
+
+                <div class="card-icon">
+                    ⭐
+                </div>
+
+                <div class="card-content">
+
+                    <h2>Favoritos</h2>
+
+                    <p>
+                        Tus himnos guardados.
+                    </p>
+
+                </div>
+
+                <div class="card-arrow">
+                    ›
+                </div>
+
+            </article>
+
+            <article class="card">
+
+                <div class="card-icon">
+                    🕘
+                </div>
+
+                <div class="card-content">
+
+                    <h2>Recientes</h2>
+
+                    <p>
+                        Continúa donde te quedaste.
+                    </p>
+
+                </div>
+
+                <div class="card-arrow">
+                    ›
+                </div>
+
+            </article>
+
+            <article class="card">
+
+                <div class="card-icon">
+                    ⚙
+                </div>
+
+                <div class="card-content">
+
+                    <h2>Ajustes</h2>
+
+                    <p>
+                        Personaliza la aplicación.
+                    </p>
+
+                </div>
+
+                <div class="card-arrow">
+                    ›
+                </div>
+
+            </article>
+
+        </section>
 
         <!-- ========================= -->
-        <!-- ACCESOS RÁPIDOS           -->
+        <!-- NAVEGACIÓN -->
         <!-- ========================= -->
 
-        <section class="quick-actions">
+        <nav class="bottom-nav">
 
-            <button>
+            <button class="nav-item active">
+
+                🏠
+
+                <span>Inicio</span>
+
+            </button>
+
+            <button class="nav-item">
 
                 📚
 
-                <span>
-
-                    Todos los Himnos
-
-                </span>
+                <span>Himnos</span>
 
             </button>
 
-
-            <button>
+            <button class="nav-item">
 
                 ⭐
 
-                <span>
-
-                    Favoritos
-
-                </span>
+                <span>Favoritos</span>
 
             </button>
 
-
-            <button>
-
-                🕘
-
-                <span>
-
-                    Recientes
-
-                </span>
-
-            </button>
-
-
-            <button>
+            <button class="nav-item">
 
                 ⚙
 
-                <span>
-
-                    Ajustes
-
-                </span>
+                <span>Ajustes</span>
 
             </button>
 
-        </section>
-
-
-        <!-- ========================= -->
-        <!-- FOOTER                    -->
-        <!-- ========================= -->
-
-        <footer>
-
-            Versión 0.1.0
-
-        </footer>
+        </nav>
 
     </div>
 
