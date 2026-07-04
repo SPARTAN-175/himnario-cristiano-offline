@@ -18,4 +18,4 @@ export function crearHeader(titulo) {
 
 }
 
-// Fin del archivo
+// Fin del archivo header.js
