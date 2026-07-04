@@ -1,1 +1,81 @@
+/*
+======================================
+Proyecto : Himnario Cristiano Offline
+Archivo  : variables.css
+Versión  : v0.1.0
+Build    : 010
+Autor    : Carlos & ChatGPT
+======================================
+*/
 
+:root{
+
+    /* ======== COLORES ======== */
+
+    --primary:#23406A;
+    --primary-dark:#1A3152;
+
+    --background:#F5F7FA;
+
+    --surface:#FFFFFF;
+
+    --text:#222222;
+
+    --text-light:#6B7280;
+
+    --border:#E5E7EB;
+
+    --accent:#D4AF37;
+
+    --danger:#D9534F;
+
+    --success:#3FA34D;
+
+
+    /* ======== TIPOGRAFÍA ======== */
+
+    --font-family:
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+    --font-small:14px;
+
+    --font-normal:16px;
+
+    --font-large:22px;
+
+    --font-title:30px;
+
+
+    /* ======== ESPACIADOS ======== */
+
+    --space-xs:5px;
+
+    --space-sm:10px;
+
+    --space-md:16px;
+
+    --space-lg:24px;
+
+    --space-xl:32px;
+
+
+    /* ======== BORDES ======== */
+
+    --radius-sm:8px;
+
+    --radius-md:12px;
+
+    --radius-lg:18px;
+
+
+    /* ======== SOMBRAS ======== */
+
+    --shadow:
+
+    0 3px 10px rgba(0,0,0,.08);
+
+}
+
+/* Fin del archivo */
