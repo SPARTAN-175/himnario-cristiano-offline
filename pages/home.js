@@ -3,20 +3,21 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : home.js
 Versión  : v0.1.0
-Build    : 005
+Build    : 007
 Autor    : Carlos & ChatGPT
 ======================================
 */
+
+import { crearHeader } from "../components/header.js";
 
 export function mostrarInicio() {
 
     const app = document.getElementById("app");
 
     app.innerHTML = `
-    
-        <main class="home">
+        ${crearHeader("📖 Himnario Cristiano")}
 
-            <h1>📖 Himnario Cristiano</h1>
+        <main class="home">
 
             <p>Versión 0.1.0</p>
 
@@ -29,7 +30,6 @@ export function mostrarInicio() {
             <button>Configuración</button>
 
         </main>
-
     `;
 
 }
