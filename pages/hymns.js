@@ -3,12 +3,13 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : hymns.js
 Versión  : v0.1.0
-Build    : 018
+Build    : 023
 Autor    : Carlos & ChatGPT
 ======================================
 */
 
 import { obtenerHimnos } from "../js/storage.js";
+import { navegar } from "../js/router.js";
 
 export async function mostrarHimnos() {
 
@@ -21,23 +22,31 @@ export async function mostrarHimnos() {
     himnos.forEach(himno => {
 
         lista += `
-            <article class="card">
 
-                <div class="card-icon">
+        <article class="card himno-item" data-id="${himno.id}">
 
-                    ${himno.numero}
+            <div class="card-icon">
 
-                </div>
+                ${himno.numero}
 
-                <div class="card-content">
+            </div>
 
-                    <h2>${himno.titulo}</h2>
+            <div class="card-content">
 
-                    <p>${himno.tema}</p>
+                <h2>${himno.titulo}</h2>
 
-                </div>
+                <p>${himno.tema}</p>
 
-            </article>
+            </div>
+
+            <div class="card-arrow">
+
+                >
+
+            </div>
+
+        </article>
+
         `;
 
     });
@@ -48,7 +57,17 @@ export async function mostrarHimnos() {
 
             <header class="hero">
 
-                <h1>Todos los Himnos</h1>
+                <div class="hero-logo">
+
+                    HC
+
+                </div>
+
+                <h1 class="hero-title">
+
+                    Todos los Himnos
+
+                </h1>
 
             </header>
 
@@ -62,6 +81,16 @@ export async function mostrarHimnos() {
 
     `;
 
-}
+    document
+        .querySelectorAll(".himno-item")
+        .forEach(card => {
 
-// Fin del archivo
+            card.addEventListener("click", () => {
+
+                navegar("himno", Number(card.dataset.id));
+
+            });
+
+        });
+
+}
