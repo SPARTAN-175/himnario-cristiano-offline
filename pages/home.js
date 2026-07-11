@@ -3,10 +3,12 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : home.js
 Versión  : v0.1.0
-Build    : 014
+Build    : 020
 Autor    : Carlos & ChatGPT
 ======================================
 */
+
+import { navegar } from "../js/router.js";
 
 export function mostrarInicio() {
 
@@ -56,103 +58,79 @@ export function mostrarInicio() {
         </section>
 
         <!-- ========================= -->
-        <!-- ACCESOS -->
+        <!-- TARJETAS -->
         <!-- ========================= -->
 
         <section class="cards">
 
-            <article class="card">
+            <article class="card card-himnos">
 
-                <div class="card-icon">
-                    📖
-                </div>
+                <div class="card-icon">📖</div>
 
                 <div class="card-content">
 
                     <h2>Todos los Himnos</h2>
 
-                    <p>
-                        Explora todo el himnario.
-                    </p>
+                    <p>Explora todo el himnario.</p>
 
                 </div>
 
-                <div class="card-arrow">
-                    ›
-                </div>
+                <div class="card-arrow">›</div>
 
             </article>
 
             <article class="card">
 
-                <div class="card-icon">
-                    ⭐
-                </div>
+                <div class="card-icon">⭐</div>
 
                 <div class="card-content">
 
                     <h2>Favoritos</h2>
 
-                    <p>
-                        Tus himnos guardados.
-                    </p>
+                    <p>Tus himnos guardados.</p>
 
                 </div>
 
-                <div class="card-arrow">
-                    ›
-                </div>
+                <div class="card-arrow">›</div>
 
             </article>
 
             <article class="card">
 
-                <div class="card-icon">
-                    🕘
-                </div>
+                <div class="card-icon">🕘</div>
 
                 <div class="card-content">
 
                     <h2>Recientes</h2>
 
-                    <p>
-                        Continúa donde te quedaste.
-                    </p>
+                    <p>Continúa donde te quedaste.</p>
 
                 </div>
 
-                <div class="card-arrow">
-                    ›
-                </div>
+                <div class="card-arrow">›</div>
 
             </article>
 
             <article class="card">
 
-                <div class="card-icon">
-                    ⚙
-                </div>
+                <div class="card-icon">⚙</div>
 
                 <div class="card-content">
 
                     <h2>Ajustes</h2>
 
-                    <p>
-                        Personaliza la aplicación.
-                    </p>
+                    <p>Personaliza la aplicación.</p>
 
                 </div>
 
-                <div class="card-arrow">
-                    ›
-                </div>
+                <div class="card-arrow">›</div>
 
             </article>
 
         </section>
 
         <!-- ========================= -->
-        <!-- NAVEGACIÓN -->
+        <!-- BARRA INFERIOR -->
         <!-- ========================= -->
 
         <nav class="bottom-nav">
@@ -194,6 +172,16 @@ export function mostrarInicio() {
     </div>
 
     `;
+
+    // Evento para abrir la lista de himnos
+
+    const cardHimnos = document.querySelector(".card-himnos");
+
+    cardHimnos.addEventListener("click", () => {
+
+        navegar("himnos");
+
+    });
 
 }
 
