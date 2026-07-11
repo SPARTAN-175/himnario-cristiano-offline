@@ -3,7 +3,7 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : layout.css
 Versión  : v0.1.0
-Build    : 013
+Build    : 015
 Autor    : Carlos & ChatGPT
 ======================================
 */
@@ -28,10 +28,10 @@ body{
 
 .home-page{
 
+    min-height:100vh;
+
     display:flex;
 
     flex-direction:column;
-
-    min-height:100vh;
 
 }
