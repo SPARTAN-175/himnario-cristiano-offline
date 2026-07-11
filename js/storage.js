@@ -1,32 +1,33 @@
-
 /*
 ======================================
 Proyecto : Himnario Cristiano Offline
 Archivo  : storage.js
-Versión  : v0.1.0
-Build    : 017
+Versión  : v0.2.0
+Build    : 001
 Autor    : Carlos & ChatGPT
 ======================================
 */
 
+let cacheHimnos = [];
+
 export async function obtenerHimnos() {
 
-    try {
-
-        const respuesta = await fetch("./data/himnos.json");
-
-        const himnos = await respuesta.json();
-
-        return himnos;
-
-    } catch (error) {
-
-        console.error("Error cargando himnos:", error);
-
-        return [];
-
+    if (cacheHimnos.length > 0) {
+        return cacheHimnos;
     }
+
+    const respuesta = await fetch("./data/himnos.json");
+
+    cacheHimnos = await respuesta.json();
+
+    return cacheHimnos;
 
 }
 
-// Fin del archivo
+export async function obtenerHimno(id){
+
+    const himnos = await obtenerHimnos();
+
+    return himnos.find(h => h.id === id);
+
+}
