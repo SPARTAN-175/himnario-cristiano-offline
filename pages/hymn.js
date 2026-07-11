@@ -3,29 +3,32 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : hymn.js
 Versión  : v0.2.0
-Build    : 003
+Build    : 004
 Autor    : Carlos & ChatGPT
 ======================================
 */
 
-import { obtenerHimno } from "../js/storage.js";
+import {
+    obtenerHimno,
+    esFavorito,
+    cambiarFavorito
+} from "../js/storage.js";
+
 import { navegar } from "../js/router.js";
 
 export async function mostrarHimno(id){
 
-    const app=document.getElementById("app");
+    const app = document.getElementById("app");
 
-    const himno=await obtenerHimno(id);
+    const himno = await obtenerHimno(id);
 
-    let letra="";
+    const favorito = esFavorito(id);
 
-    himno.letra.forEach(linea=>{
+    const letra = himno.letra
+        .map(linea => `<p>${linea}</p>`)
+        .join("");
 
-        letra+=`<p>${linea}</p>`;
-
-    });
-
-    app.innerHTML=`
+    app.innerHTML = `
 
     <div class="home-page">
 
@@ -69,7 +72,7 @@ export async function mostrarHimno(id){
                 id="btnFavorito"
                 class="card">
 
-                ⭐ Agregar a Favoritos
+                ${favorito ? "💛 Quitar de Favoritos" : "🤍 Agregar a Favoritos"}
 
             </button>
 
@@ -81,17 +84,15 @@ export async function mostrarHimno(id){
 
     document
         .getElementById("btnVolver")
-        .onclick=()=>{
-
-            navegar("himnos");
-
-        };
+        .onclick = () => navegar("himnos");
 
     document
         .getElementById("btnFavorito")
-        .onclick=()=>{
+        .onclick = () => {
 
-            alert("Próximamente podrás guardar este himno en favoritos.");
+            cambiarFavorito(id);
+
+            mostrarHimno(id);
 
         };
 
