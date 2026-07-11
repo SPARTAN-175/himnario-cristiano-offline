@@ -3,7 +3,7 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : hymn.js
 Versión  : v0.2.0
-Build    : 001
+Build    : 003
 Autor    : Carlos & ChatGPT
 ======================================
 */
@@ -13,17 +13,9 @@ import { navegar } from "../js/router.js";
 
 export async function mostrarHimno(id){
 
-    const app = document.getElementById("app");
+    const app=document.getElementById("app");
 
-    const himno = await obtenerHimno(id);
-
-    if(!himno){
-
-        app.innerHTML="<h2>Himno no encontrado</h2>";
-
-        return;
-
-    }
+    const himno=await obtenerHimno(id);
 
     let letra="";
 
@@ -45,6 +37,12 @@ export async function mostrarHimno(id){
 
             </button>
 
+            <div class="hero-logo">
+
+                HC
+
+            </div>
+
             <h1>
 
                 ${himno.numero}. ${himno.titulo}
@@ -65,6 +63,18 @@ export async function mostrarHimno(id){
 
         </section>
 
+        <section class="cards">
+
+            <button
+                id="btnFavorito"
+                class="card">
+
+                ⭐ Agregar a Favoritos
+
+            </button>
+
+        </section>
+
     </div>
 
     `;
@@ -74,6 +84,14 @@ export async function mostrarHimno(id){
         .onclick=()=>{
 
             navegar("himnos");
+
+        };
+
+    document
+        .getElementById("btnFavorito")
+        .onclick=()=>{
+
+            alert("Próximamente podrás guardar este himno en favoritos.");
 
         };
 
