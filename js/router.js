@@ -3,15 +3,16 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : router.js
 Versión  : v0.1.0
-Build    : 019
+Build    : 023
 Autor    : Carlos & ChatGPT
 ======================================
 */
 
 import { mostrarInicio } from "../pages/home.js";
 import { mostrarHimnos } from "../pages/hymns.js";
+import { mostrarHimno } from "../pages/hymn.js";
 
-export function navegar(pantalla) {
+export function navegar(pantalla, id = null) {
 
     switch (pantalla) {
 
@@ -21,6 +22,10 @@ export function navegar(pantalla) {
 
         case "himnos":
             mostrarHimnos();
+            break;
+
+        case "himno":
+            mostrarHimno(id);
             break;
 
         default:
@@ -35,5 +40,3 @@ export function iniciarRouter() {
     navegar("inicio");
 
 }
-
-// Fin del archivo
