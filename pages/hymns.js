@@ -2,8 +2,8 @@
 ======================================
 Proyecto : Himnario Cristiano Offline
 Archivo  : hymns.js
-Versión  : v0.1.0
-Build    : 024
+Versión  : v0.2.0
+Build    : 002
 Autor    : Carlos & ChatGPT
 ======================================
 */
@@ -18,18 +18,32 @@ export async function mostrarHimnos() {
     const himnos = await obtenerHimnos();
 
     app.innerHTML = `
-
+    
     <div class="home-page">
 
         <header class="hero">
+
+            <button id="btnInicio" class="back-button">
+
+                ← Inicio
+
+            </button>
 
             <div class="hero-logo">
                 HC
             </div>
 
             <h1 class="hero-title">
+
                 Todos los Himnos
+
             </h1>
+
+            <p class="hero-subtitle">
+
+                ${himnos.length} himnos disponibles
+
+            </p>
 
         </header>
 
@@ -37,10 +51,8 @@ export async function mostrarHimnos() {
 
             <div class="search-box">
 
-                <span class="search-icon">🔍</span>
-
                 <input
-                    id="buscarHimno"
+                    id="txtBuscar"
                     type="text"
                     placeholder="Buscar por número o título..."
                 >
@@ -50,8 +62,8 @@ export async function mostrarHimnos() {
         </section>
 
         <section
-            class="cards"
-            id="listaHimnos">
+            id="listaHimnos"
+            class="cards">
 
         </section>
 
@@ -61,67 +73,63 @@ export async function mostrarHimnos() {
 
     const lista = document.getElementById("listaHimnos");
 
-    function renderizar(filtro = "") {
+    function pintarLista(texto = "") {
 
         lista.innerHTML = "";
 
-        const texto = filtro.toLowerCase();
+        const filtro = texto.toLowerCase();
 
-        const resultados = himnos.filter(himno => {
+        const resultado = himnos.filter(h => {
 
-            return (
+            return h.numero.toString().includes(filtro)
 
-                himno.numero.toString().includes(texto)
+            ||
 
-                ||
-
-                himno.titulo.toLowerCase().includes(texto)
-
-            );
+            h.titulo.toLowerCase().includes(filtro);
 
         });
 
-        resultados.forEach(himno => {
+        resultado.forEach(himno => {
 
             lista.innerHTML += `
 
-            <article
-                class="card himno-item"
-                data-id="${himno.id}">
+                <article
+                    class="card item-himno"
+                    data-id="${himno.id}">
 
-                <div class="card-icon">
+                    <div class="card-icon">
 
-                    ${himno.numero}
+                        ${himno.numero}
 
-                </div>
+                    </div>
 
-                <div class="card-content">
+                    <div class="card-content">
 
-                    <h2>${himno.titulo}</h2>
+                        <h2>${himno.titulo}</h2>
 
-                    <p>${himno.tema}</p>
+                        <p>${himno.tema}</p>
 
-                </div>
+                    </div>
 
-                <div class="card-arrow">
+                    <div class="card-arrow">
 
-                    >
+                        >
 
-                </div>
+                    </div>
 
-            </article>
+                </article>
 
             `;
 
         });
 
         document
-            .querySelectorAll(".himno-item")
-            .forEach(card => {
+            .querySelectorAll(".item-himno")
+            .forEach(item => {
 
-                card.onclick = () => {
+                item.onclick = () => {
 
-                    navegar("himno", Number(card.dataset.id));
+                    navegar("himno", Number(item.dataset.id));
 
                 };
 
@@ -129,14 +137,22 @@ export async function mostrarHimnos() {
 
     }
 
-    renderizar();
+    pintarLista();
 
     document
-        .getElementById("buscarHimno")
+        .getElementById("txtBuscar")
         .addEventListener("input", e => {
 
-            renderizar(e.target.value);
+            pintarLista(e.target.value);
 
         });
+
+    document
+        .getElementById("btnInicio")
+        .onclick = () => {
+
+            navegar("inicio");
+
+        };
 
 }
