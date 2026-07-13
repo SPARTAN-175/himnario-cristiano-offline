@@ -1,24 +1,44 @@
-const CACHE = "himnario-v1";
+/*
+======================================
+Proyecto : Himnario Cristiano Offline
+Archivo  : service-worker.js
+Versión  : v0.3.0
+Build    : 006
+Autor    : Carlos & ChatGPT
+======================================
+*/
 
-const archivos = [
+const VERSION = "0.3.0";
+
+const CACHE = `himnario-${VERSION}`;
+
+const ARCHIVOS = [
 
     "./",
 
     "./index.html",
 
+    "./manifest.json",
+
     "./css/reset.css",
-
     "./css/variables.css",
-
     "./css/layout.css",
-
     "./css/components.css",
-
     "./css/pages.css",
 
     "./js/app.js",
+    "./js/router.js",
+    "./js/storage.js",
 
-    "./js/router.js"
+    "./pages/home.js",
+    "./pages/hymns.js",
+    "./pages/hymn.js",
+
+    "./data/himnos.json",
+
+    "./assets/icons/icon-192.png",
+    "./assets/icons/icon-512.png",
+    "./assets/icons/favicon.png"
 
 ];
 
@@ -28,23 +48,55 @@ self.addEventListener("install", event => {
 
         caches.open(CACHE)
 
-            .then(cache => cache.addAll(archivos))
+        .then(cache => cache.addAll(ARCHIVOS))
 
     );
 
+    self.skipWaiting();
+
 });
 
-self.addEventListener("fetch", event => {
+self.addEventListener("activate", event => {
+
+    event.waitUntil(
+
+        caches.keys()
+
+        .then(keys =>
+
+            Promise.all(
+
+                keys.map(key=>{
+
+                    if(key!==CACHE){
+
+                        return caches.delete(key);
+
+                    }
+
+                })
+
+            )
+
+        )
+
+    );
+
+    self.clients.claim();
+
+});
+
+self.addEventListener("fetch",event=>{
 
     event.respondWith(
 
         caches.match(event.request)
 
-            .then(respuesta => {
+        .then(response=>{
 
-                return respuesta || fetch(event.request);
+            return response || fetch(event.request);
 
-            })
+        })
 
     );
 
