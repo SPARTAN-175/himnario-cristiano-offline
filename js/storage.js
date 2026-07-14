@@ -2,29 +2,49 @@
 ======================================
 Proyecto : Himnario Cristiano Offline
 Archivo  : storage.js
-Versión  : v0.2.0
-Build    : 004
+Versión  : v0.3.0
+Build    : 009
 Autor    : Carlos & ChatGPT
 ======================================
 */
 
-let cacheHimnos = [];
+const CLAVE_HIMNOS = "hc_himnos";
 
 const CLAVE_FAVORITOS = "hc_favoritos";
 
-export async function obtenerHimnos() {
+let cache = null;
 
-    if (cacheHimnos.length > 0) {
+export async function obtenerHimnos(){
 
-        return cacheHimnos;
+    if(cache){
+
+        return cache;
+
+    }
+
+    const guardados = localStorage.getItem(CLAVE_HIMNOS);
+
+    if(guardados){
+
+        cache = JSON.parse(guardados);
+
+        return cache;
 
     }
 
     const respuesta = await fetch("./data/himnos.json");
 
-    cacheHimnos = await respuesta.json();
+    cache = await respuesta.json();
 
-    return cacheHimnos;
+    localStorage.setItem(
+
+        CLAVE_HIMNOS,
+
+        JSON.stringify(cache)
+
+    );
+
+    return cache;
 
 }
 
@@ -32,7 +52,7 @@ export async function obtenerHimno(id){
 
     const himnos = await obtenerHimnos();
 
-    return himnos.find(h => h.id === id);
+    return himnos.find(h=>h.id===id);
 
 }
 
@@ -44,19 +64,13 @@ export function obtenerFavoritos(){
 
 }
 
-export function esFavorito(id){
-
-    return obtenerFavoritos().includes(id);
-
-}
-
 export function cambiarFavorito(id){
 
     let favoritos = obtenerFavoritos();
 
     if(favoritos.includes(id)){
 
-        favoritos = favoritos.filter(item => item !== id);
+        favoritos = favoritos.filter(f=>f!==id);
 
     }else{
 
@@ -71,5 +85,11 @@ export function cambiarFavorito(id){
         JSON.stringify(favoritos)
 
     );
+
+}
+
+export function esFavorito(id){
+
+    return obtenerFavoritos().includes(id);
 
 }
