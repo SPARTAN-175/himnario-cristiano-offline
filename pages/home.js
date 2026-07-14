@@ -111,7 +111,7 @@ export function mostrarInicio() {
 
             </article>
 
-            <article class="card">
+            <article class="card-configuracion">
 
                 <div class="card-icon">⚙</div>
 
@@ -185,4 +185,11 @@ export function mostrarInicio() {
 
 }
 
+document
+    .querySelector(".card-configuracion")
+    .onclick = ()=>{
+
+        navegar("configuracion");
+
+    };
 // Fin del archivo
