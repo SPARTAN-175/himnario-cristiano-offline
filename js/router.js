@@ -12,6 +12,7 @@ import { mostrarInicio } from "../pages/home.js";
 import { mostrarHimnos } from "../pages/hymns.js";
 import { mostrarHimno } from "../pages/hymn.js";
 import { mostrarSplash } from "../pages/splash.js";
+import { mostrarConfiguracion } from "../pages/settings.js";
 
 export function navegar(pantalla, id = null) {
 
@@ -31,6 +32,10 @@ export function navegar(pantalla, id = null) {
 
         case "splash":
             mostrarSplash();
+            break;
+
+        case "configuracion":
+            mostrarConfiguracion();
             break;
 
         default:
