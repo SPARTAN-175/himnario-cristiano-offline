@@ -3,20 +3,23 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : storage.js
 Versión  : v0.3.0
-Build    : 009
+Build    : 010
 Autor    : Carlos & ChatGPT
 ======================================
 */
 
 const CLAVE_HIMNOS = "hc_himnos";
-
 const CLAVE_FAVORITOS = "hc_favoritos";
 
 let cache = null;
 
-export async function obtenerHimnos(){
+// ===============================
+// HIMNOS
+// ===============================
 
-    if(cache){
+export async function obtenerHimnos() {
+
+    if (cache) {
 
         return cache;
 
@@ -24,7 +27,7 @@ export async function obtenerHimnos(){
 
     const guardados = localStorage.getItem(CLAVE_HIMNOS);
 
-    if(guardados){
+    if (guardados) {
 
         cache = JSON.parse(guardados);
 
@@ -48,31 +51,43 @@ export async function obtenerHimnos(){
 
 }
 
-export async function obtenerHimno(id){
+export async function obtenerHimno(id) {
 
     const himnos = await obtenerHimnos();
 
-    return himnos.find(h=>h.id===id);
+    return himnos.find(h => h.id === id);
 
 }
 
-export function obtenerFavoritos(){
+// ===============================
+// FAVORITOS
+// ===============================
 
-    const datos = localStorage.getItem(CLAVE_FAVORITOS);
+export function obtenerFavoritos() {
 
-    return datos ? JSON.parse(datos) : [];
+    return JSON.parse(
+
+        localStorage.getItem(CLAVE_FAVORITOS)
+
+    ) || [];
 
 }
 
-export function cambiarFavorito(id){
+export function esFavorito(id) {
+
+    return obtenerFavoritos().includes(id);
+
+}
+
+export function cambiarFavorito(id) {
 
     let favoritos = obtenerFavoritos();
 
-    if(favoritos.includes(id)){
+    if (favoritos.includes(id)) {
 
-        favoritos = favoritos.filter(f=>f!==id);
+        favoritos = favoritos.filter(f => f !== id);
 
-    }else{
+    } else {
 
         favoritos.push(id);
 
@@ -88,8 +103,42 @@ export function cambiarFavorito(id){
 
 }
 
-export function esFavorito(id){
+// ===============================
+// IMPORTAR HIMNARIO
+// ===============================
 
-    return obtenerFavoritos().includes(id);
+export function importarHimnario(himnos){
+
+    cache = himnos;
+
+    localStorage.setItem(
+
+        CLAVE_HIMNOS,
+
+        JSON.stringify(himnos)
+
+    );
+
+}
+
+// ===============================
+// EXPORTAR HIMNARIO
+// ===============================
+
+export async function exportarHimnario(){
+
+    return await obtenerHimnos();
+
+}
+
+// ===============================
+// RESTABLECER
+// ===============================
+
+export function borrarHimnario(){
+
+    cache = null;
+
+    localStorage.removeItem(CLAVE_HIMNOS);
 
 }
