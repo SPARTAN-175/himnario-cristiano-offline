@@ -3,7 +3,7 @@
 Proyecto : Himnario Cristiano Offline
 Archivo  : settings.js
 Versión  : v0.3.0
-Build    : 011
+Build    : 017
 Autor    : Carlos & ChatGPT
 ======================================
 */
@@ -16,11 +16,11 @@ export function mostrarConfiguracion(){
 
     app.innerHTML = `
 
-    <div class="home-page">
+    <main class="home-page">
 
         <header class="hero">
 
-            <button id="btnInicio">
+            <button id="btnVolver">
 
                 ← Inicio
 
@@ -38,38 +38,76 @@ export function mostrarConfiguracion(){
 
             </h1>
 
+            <p>
+
+                Himnario Cristiano Offline
+
+            </p>
+
         </header>
 
         <section class="cards">
 
-            <button class="card">
+            <button id="btnImportar" class="card">
 
-                Importar Himnario
+                📥 Importar Himnario
+
+            </button>
+
+            <button id="btnExportar" class="card">
+
+                📤 Exportar Himnario
+
+            </button>
+
+            <button id="btnActualizar" class="card">
+
+                🔄 Restaurar Himnario Original
 
             </button>
 
             <button class="card">
 
-                Exportar Himnario
-
-            </button>
-
-            <button class="card">
-
-                Información
+                ℹ Versión 0.3.0 Alpha
 
             </button>
 
         </section>
 
-    </div>
+    </main>
 
     `;
 
     document
+        .getElementById("btnVolver")
+        .onclick = ()=>{
 
-        .getElementById("btnInicio")
+            navegar("inicio");
 
-        .onclick = () => navegar("inicio");
+        };
+
+    document
+        .getElementById("btnImportar")
+        .onclick = ()=>{
+
+            alert("Próximo Build");
+
+        };
+
+    document
+        .getElementById("btnExportar")
+        .onclick = ()=>{
+
+            alert("Próximo Build");
+
+        };
+
+    document
+        .getElementById("btnActualizar")
+        .onclick = ()=>{
+
+            alert("Próximo Build");
+
+        };
 
 }
