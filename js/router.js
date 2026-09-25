@@ -1,0 +1,1 @@
+import{home}from"../pages/home.js";import{hymns}from"../pages/hymns.js";import{hymn}from"../pages/hymn.js";import{bible}from"../pages/bible.js";import{settings}from"../pages/settings.js";export async function go(r,p=null){await({home,hymns,hymn,bible,settings}[r]||home)(p)}
