@@ -12,7 +12,7 @@ function parseTxt(t){
     const sections=[];let current={label:"",lines:[]};
     const flush=()=>{if(current.lines.length)sections.push(current);current={label:"",lines:[]}};
     body.forEach(line=>{
-      const s=clean(line); if(!s){flush();continue}
+      const s=clean(line); if(!s){flush();return}
       if(/^(CORO|CORO:|ESTRIBILLO|ESTRIBILLO:|PUENTE|PUENTE:)$/i.test(s)){flush();current.label=s.replace(/:$/,"" ).toUpperCase();return}
       current.lines.push(s)
     });flush();
