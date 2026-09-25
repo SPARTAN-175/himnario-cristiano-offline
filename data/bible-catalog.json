@@ -1,0 +1,14 @@
+{
+  "versions": [
+    {
+      "id": "RVR1960",
+      "name": "Reina-Valera 1960",
+      "status": "importable"
+    },
+    {
+      "id": "CUSTOM",
+      "name": "Otra versión",
+      "status": "importable"
+    }
+  ]
+}
