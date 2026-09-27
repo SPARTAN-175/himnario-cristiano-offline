@@ -1,39 +1,66 @@
-const CACHE="hco-v1.6";
-const ASSETS=["./","./index.html","./manifest.json","./css/app.css","./js/app.js","./js/db.js","./js/router.js","./js/ui.js","./js/hymns.js","./js/bible.js","./js/importers.js","./pages/home.js","./pages/hymns.js","./pages/hymn.js","./pages/bible.js","./pages/settings.js","./data/himnos.json","./data/bible-catalog.json","./data/bible-rvr1960.json","./assets/icons/icon-192.png","./assets/icons/icon-512.png","./assets/icons/favicon.png"];
-self.addEventListener("install",event=>{
-  event.waitUntil(
-    caches.open(CACHE)
-      .then(cache=>cache.addAll(ASSETS))
-      .then(()=>self.skipWaiting())
-  );
-});
-self.addEventListener("activate",event=>{
-  event.waitUntil(
-    caches.keys()
-      .then(keys=>Promise.all(keys.filter(key=>key.startsWith("hco-")&&key!==CACHE).map(key=>caches.delete(key))))
-      .then(()=>self.clients.claim())
-  );
-});
-self.addEventListener("fetch",event=>{
-  if(event.request.method!=="GET")return;
-  const req=event.request;
-  const path=new URL(req.url).pathname;
-  const codeFile=path.includes("/js/")||path.includes("/pages/");
-  if(codeFile){
-    event.respondWith(
-      fetch(req).then(response=>{
-        const copy=response.clone();
-        caches.open(CACHE).then(cache=>cache.put(req,copy));
-        return response;
-      }).catch(()=>caches.match(req).then(response=>response||caches.match("./index.html")))
+const VERSION = "1.6.1";
+const CACHE = `himnario-${VERSION}`;
+
+const ARCHIVOS = [
+    "./",
+    "./index.html",
+    "./manifest.json",
+
+    "./css/reset.css",
+    "./css/variables.css",
+    "./css/layout.css",
+    "./css/components.css",
+    "./css/pages.css",
+
+    "./js/app.js",
+    "./js/router.js",
+    "./js/storage.js",
+    "./js/database.js",
+    "./js/database-hymns.js",
+
+    "./pages/home.js",
+    "./pages/hymns.js",
+    "./pages/hymn.js",
+    "./pages/splash.js",
+    "./pages/settings.js",
+    "./pages/favorites.js",
+
+    "./data/himnos.json",
+
+    "./assets/icons/icon-192.png",
+    "./assets/icons/icon-512.png",
+    "./assets/icons/favicon.png"
+];
+
+self.addEventListener("install", event => {
+    event.waitUntil(
+        caches.open(CACHE)
+            .then(cache => cache.addAll(ARCHIVOS))
     );
-    return;
-  }
-  event.respondWith(
-    caches.match(req).then(response=>response||fetch(req).then(networkResponse=>{
-      const copy=networkResponse.clone();
-      caches.open(CACHE).then(cache=>cache.put(req,copy));
-      return networkResponse;
-    }).catch(()=>caches.match("./index.html")))
-  );
+    self.skipWaiting();
+});
+
+self.addEventListener("activate", event => {
+    event.waitUntil(
+        caches.keys().then(keys =>
+            Promise.all(
+                keys.map(key => key !== CACHE ? caches.delete(key) : null)
+            )
+        )
+    );
+    self.clients.claim();
+});
+
+self.addEventListener("fetch", event => {
+    if (event.request.method !== "GET") return;
+
+    event.respondWith(
+        caches.match(event.request).then(cached => {
+            return cached || fetch(event.request).then(response => {
+                const copy = response.clone();
+                caches.open(CACHE).then(cache => cache.put(event.request, copy));
+                return response;
+            });
+        })
+    );
 });
