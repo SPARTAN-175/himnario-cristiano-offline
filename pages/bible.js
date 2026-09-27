@@ -1,5 +1,5 @@
 import{go}from"../js/router.js";
-import{versions,books,chapter,chapterInfo,saveChapterInfo,notes,note,deleteNote,highlights,highlight,clearHighlight,searchVerses,studies,addVerseToStudy,HIGHLIGHT_COLORS,highlightedVerses}from"../js/bible.js?v=1.5";
+import{versions,books,chapter,chapterInfo,saveChapterInfo,notes,note,deleteNote,highlights,highlight,clearHighlight,searchVerses,studies,addVerseToStudy,HIGHLIGHT_COLORS,highlightedVerses,getReadingPosition,saveReadingPosition}from"../js/bible.js?v=1.5";
 import{shell,nav,esc,toast}from"../js/ui.js";
 const COLORS=HIGHLIGHT_COLORS;
 let currentBookCache=[];
@@ -8,7 +8,17 @@ export async function bible(){
   const v=document.getElementById("view"),vs=await versions(),bs=await books();
   if(!vs.length){v.innerHTML=`<div class="notice">No hay una Biblia instalada. Importa una versión autorizada desde Ajustes.</div>`;nav(go);return}
   const ver=vs[0],bb=bs.filter(x=>x.versionId===ver.id).sort((a,b)=>a.order-b.order);currentBookCache=bb;
-  v.innerHTML=`<div class="card"><div class="title">${esc(ver.name)}</div><div class="muted">Busca cualquier versículo por texto o referencia.</div><div class="search" style="margin-top:12px"><span>⌕</span><input id="verse-search" placeholder="Buscar versículo..."></div><div class="actions" style="margin-top:10px"><button class="btn" id="studies">📖 Mis temas y predicaciones</button><button class="btn" id="saved-verses">⭐ Mis versículos marcados</button></div></div><h2 class="section-title">Libros</h2><section class="grid">${bb.map(b=>`<button class="card click" data-b="${esc(b.id.split(":").slice(1).join(":"))}"><div class="iconbox">${b.order}</div><div class="grow"><div class="title">${esc(b.name)}</div><div class="muted">${b.chapters.length} capítulos</div></div>›</button>`).join("")}</section><section id="search-results"></section>`;
+  v.innerHTML=`<div class="card"><div class="title">${esc(ver.name)}</div><div class="muted">Busca cualquier versículo por texto o referencia.</div><div class="search" style="margin-top:12px"><span>⌕</span><input id="verse-search" placeholder="Buscar versículo..."></div><div class="actions" style="margin-top:10px"><button class="btn" id="studies">📖 Mis temas y predicaciones</button><button class="btn" id="saved-verses">⭐ Mis versículos marcados</button></div></div><div id="continue-reading"></div><h2 class="section-title">Libros</h2><section class="grid">${bb.map(b=>`<button class="card click" data-b="${esc(b.id.split(":").slice(1).join(":"))}"><div class="iconbox">${b.order}</div><div class="grow"><div class="title">${esc(b.name)}</div><div class="muted">${b.chapters.length} capítulos</div></div>›</button>`).join("")}</section><section id="search-results"></section>`;
+  const last=await getReadingPosition();
+  const continueBox=document.getElementById("continue-reading");
+  if(last&&last.versionId===ver.id){
+    const lastBook=bb.find(x=>x.id===`${ver.id}:${last.bookId}`);
+    if(lastBook){
+      continueBox.innerHTML=`<button class="card click" id="continue-reading-btn"><div class="iconbox">▶</div><div class="grow"><div class="title">Continuar leyendo</div><div class="muted">${esc(lastBook.name)} · Capítulo ${last.chapter}</div></div>›</button>`;
+      document.getElementById("continue-reading-btn").onclick=()=>read(ver.id,last.bookId,last.chapter,lastBook,last.verse||1);
+    }
+  }
+
   document.querySelectorAll("[data-b]").forEach(x=>x.onclick=()=>pick(ver.id,x.dataset.b,bb.find(b=>b.id===ver.id+":"+x.dataset.b)));
   document.getElementById("studies").onclick=()=>go("studies");
   document.getElementById("saved-verses").onclick=()=>showSavedVerses(ver,bb);
@@ -22,15 +32,37 @@ async function pick(v,b,book){
   document.querySelectorAll("[data-c]").forEach(x=>x.onclick=()=>read(v,b,+x.dataset.c,book));
 }
 async function read(v,b,c,book,focusVerse=null){
-  const view=document.getElementById("view"),a=await chapter(v,b,c),ref=`${v}:${b}:${c}`,ns=await notes(ref),hs=await highlights(ref),ci=await chapterInfo(v,b,c),map=new Map(hs.map(x=>[x.verse,x])),notesMap=new Map(ns.map(x=>[x.verse,x]));
+  const view=document.getElementById("view"),a=await chapter(v,b,c),ref=`${v}:${b}:${c}`,ns=await notes(ref),hs=await highlights(ref),ci=await chapterInfo(v,b,c),map=new Map(hs.map(x=>[x.verse,x])),notesMap=new Map(ns.map(x=>[x.verse,x]));\n  await saveReadingPosition(v,b,c,focusVerse||a[0]?.number||1);
   document.querySelector(".app")?.classList.add("reader-mode");
   view.innerHTML=`<div class="bible-reader"><div class="reader-toolbar"><button class="reader-icon" id="back" aria-label="Volver">‹</button><button class="version-pill" id="version-pill">${esc(v)}</button><div class="reader-toolbar-right"><button class="reader-icon" id="reader-search" aria-label="Buscar">⌕</button><button class="reader-icon" id="reader-more" aria-label="Más opciones">•••</button></div></div><div class="reader-book">${esc(book.name).toUpperCase()}</div><div class="reader-rule"></div><div class="reader-topic"><span>${esc(ci.topic||"Sin tema definido")}</span><button class="topic-edit" id="edit-topic">Editar</button></div><div class="reader-actions"><span>Capítulo ${c}</span><span>Mantén presionado un versículo para marcarlo</span></div><div class="scripture">${a.map(x=>{const h=map.get(x.number),n=notesMap.get(x.number);return`<div id="verse-${x.number}" class="verse-row ${h?"is-highlighted":""}" style="${h?`--highlight:${COLORS.find(z=>z.id===h.color)?.hex||"#fde68a"}`:""}" data-verse-row="${x.number}"><span class="verse-num">${x.number}</span> <span class="verse-text">${esc(x.text)}</span><div class="verse-tools"><button class="comment" data-note="${x.number}">${n?"✎ Editar comentario":"＋ Comentario"}</button></div>${n?`<div class="verse-note"><strong>Comentario:</strong> ${esc(n.text)} <button class="note-delete" data-note-delete="${n.id}">Eliminar</button></div>`:""}</div>`}).join("")}</div><div class="chapter-pager"><button class="pager-btn" id="prev-chapter" aria-label="Capítulo anterior">‹</button><div><small>${esc(book.name)}</small><strong>${c}</strong></div><button class="pager-btn" id="next-chapter" aria-label="Capítulo siguiente">›</button></div></div>`;
   document.getElementById("back").onclick=()=>pick(v,b,book);
   document.getElementById("reader-search").onclick=()=>{const q=prompt("Buscar en la Biblia","");if(q?.trim()){go("bible").then(()=>{const input=document.getElementById("verse-search");if(input){input.value=q.trim();input.dispatchEvent(new Event("input"))}})}};
   document.getElementById("reader-more").onclick=()=>openVerseMenu({v,b,c,book,verse:a.find(x=>x.number===focusVerse)||a[0],current:map.get(focusVerse||a[0]?.number)});
   const idx=book.chapters.findIndex(x=>x.number===c);
-  document.getElementById("prev-chapter").onclick=()=>idx>0&&read(v,b,book.chapters[idx-1].number,book);
-  document.getElementById("next-chapter").onclick=()=>idx<book.chapters.length-1&&read(v,b,book.chapters[idx+1].number,book);
+  document.getElementById("prev-chapter").onclick=()=>{
+    if(idx>0){
+      read(v,b,book.chapters[idx-1].number,book);
+      return;
+    }
+    const bi=currentBookCache.findIndex(x=>x.id===book.id);
+    if(bi>0){
+      const prevBook=currentBookCache[bi-1];
+      const first=prevBook.chapters[prevBook.chapters.length-1];
+      read(v,prevBook.id.split(":").slice(1).join(":"),first.number,prevBook);
+    }
+  };
+  document.getElementById("next-chapter").onclick=()=>{
+    if(idx<book.chapters.length-1){
+      read(v,b,book.chapters[idx+1].number,book);
+      return;
+    }
+    const bi=currentBookCache.findIndex(x=>x.id===book.id);
+    if(bi>=0&&bi<currentBookCache.length-1){
+      const nextBook=currentBookCache[bi+1];
+      const first=nextBook.chapters[0];
+      read(v,nextBook.id.split(":").slice(1).join(":"),first.number,nextBook);
+    }
+  };
   document.getElementById("edit-topic").onclick=async()=>{const t=prompt("Tema de este capítulo",ci.topic||"");if(t===null)return;ci.topic=t.trim();await saveChapterInfo(ci);document.querySelector(".reader-topic span").textContent=ci.topic||"Sin tema definido";toast("Tema guardado")};
   document.querySelectorAll("[data-note]").forEach(btn=>btn.onclick=async()=>{const num=+btn.dataset.note,old=notesMap.get(num);const t=prompt("Comentario para este versículo",old?.text||"");if(t===null)return;if(t.trim()){await note({id:old?.id||crypto.randomUUID(),ref,text:t.trim(),verse:num});toast("Comentario guardado");read(v,b,c,book,focusVerse||num)}else if(old){await deleteNote(old.id);toast("Comentario eliminado");read(v,b,c,book,focusVerse||num)}});
   document.querySelectorAll("[data-note-delete]").forEach(btn=>btn.onclick=async()=>{await deleteNote(btn.dataset.noteDelete);toast("Comentario eliminado");read(v,b,c,book,focusVerse)});
