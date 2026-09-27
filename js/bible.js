@@ -16,6 +16,21 @@ export async function importBible(x){
   }
   await bulk("bibleBooks",bs);await bulk("bibleChapters",cs);await bulk("bibleVerses",vs);
 }
+
+export async function seedBundledBible(){
+  const existing=await all("bibleVersions");
+  const current=existing.find(x=>x.id==="rvr1960");
+  const chapters=await all("bibleChapters");
+  const rvrChapters=chapters.filter(x=>x.versionId==="rvr1960");
+  const topics=rvrChapters.filter(x=>String(x.topic||"").trim()).length;
+  if(current && rvrChapters.length>=1189 && topics>=1103)return false;
+  const res=await fetch("./data/bible-rvr1960.json",{cache:"no-store"});
+  if(!res.ok)throw Error("No se pudo cargar la Biblia integrada");
+  const data=await res.json();
+  await importBible(data);
+  return true;
+}
+
 export async function chapter(v,b,c){return(await all("bibleVerses")).filter(x=>x.versionId===v&&x.bookId===b&&x.chapter===c).sort((a,b)=>a.number-b.number).map(x=>({...x,text:cleanText(x.text)}))}
 export async function chapterInfo(v,b,c){return (await all("bibleChapters")).find(x=>x.id===`${v}:${b}:${c}`)||{id:`${v}:${b}:${c}`,versionId:v,bookId:b,chapter:c,topic:""}}
 export const saveChapterInfo=x=>put("bibleChapters",x);
