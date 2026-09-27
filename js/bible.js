@@ -1,4 +1,6 @@
 import{all,put,bulk,remove}from"./db.js";
+const cleanText=s=>String(s??"").replace(/\\n/g,"\n").replace(/\/n/g,"").replace(/\n{3,}/g,"\n\n").trim();
+export {cleanText};
 export const versions=()=>all("bibleVersions");
 export const books=()=>all("bibleBooks");
 export async function importBible(x){
@@ -9,12 +11,12 @@ export async function importBible(x){
     bs.push({id:x.version.id+":"+b.id,versionId:x.version.id,name:b.name,order:b.order,chapters:b.chapters||[]});
     for(const c of b.chapters||[]){
       cs.push({id:`${x.version.id}:${b.id}:${c.number}`,versionId:x.version.id,bookId:b.id,chapter:c.number,topic:c.topic||""});
-      for(const v of c.verses||[])vs.push({id:`${x.version.id}:${b.id}:${c.number}:${v.number}`,versionId:x.version.id,bookId:b.id,chapter:c.number,number:v.number,text:v.text});
+      for(const v of c.verses||[])vs.push({id:`${x.version.id}:${b.id}:${c.number}:${v.number}`,versionId:x.version.id,bookId:b.id,chapter:c.number,number:v.number,text:cleanText(v.text)});
     }
   }
   await bulk("bibleBooks",bs);await bulk("bibleChapters",cs);await bulk("bibleVerses",vs);
 }
-export async function chapter(v,b,c){return(await all("bibleVerses")).filter(x=>x.versionId===v&&x.bookId===b&&x.chapter===c).sort((a,b)=>a.number-b.number)}
+export async function chapter(v,b,c){return(await all("bibleVerses")).filter(x=>x.versionId===v&&x.bookId===b&&x.chapter===c).sort((a,b)=>a.number-b.number).map(x=>({...x,text:cleanText(x.text)}))}
 export async function chapterInfo(v,b,c){return (await all("bibleChapters")).find(x=>x.id===`${v}:${b}:${c}`)||{id:`${v}:${b}:${c}`,versionId:v,bookId:b,chapter:c,topic:""}}
 export const saveChapterInfo=x=>put("bibleChapters",x);
 export const notes=r=>all("notes").then(a=>a.filter(x=>x.ref===r));
@@ -34,9 +36,9 @@ export async function searchVerses(q){
     const b=bookMap.get(`${x.versionId}:${x.bookId}`);
     const name=(b?.name||x.bookId).toLowerCase();
     const byRef=refBook&&name===refBook&&refChapter===x.chapter&&(refVerse==null||refVerse===x.number);
-    return byRef||x.text.toLowerCase().includes(s)||(`${x.chapter}:${x.number}`===s);
+    return byRef||cleanText(x.text).toLowerCase().includes(s)||(`${x.chapter}:${x.number}`===s);
   }).slice(0,80).map(x=>{
-    const b=bookMap.get(`${x.versionId}:${x.bookId}`);return{...x,bookName:b?.name||x.bookId,versionName:versionMap.get(x.versionId)?.name||x.versionId}
+    const b=bookMap.get(`${x.versionId}:${x.bookId}`);return{...x,text:cleanText(x.text),bookName:b?.name||x.bookId,versionName:versionMap.get(x.versionId)?.name||x.versionId}
   });
 }
 export const studies=()=>all("studies");
