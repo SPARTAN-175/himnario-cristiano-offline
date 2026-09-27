@@ -1,5 +1,5 @@
-const CACHE="hco-v1.5";
-const ASSETS=["./","./index.html","./manifest.json","./css/app.css","./js/app.js","./js/db.js","./js/router.js","./js/ui.js","./js/hymns.js","./js/bible.js","./js/importers.js","./pages/home.js","./pages/hymns.js","./pages/hymn.js","./pages/bible.js","./pages/settings.js","./data/hymns.json","./data/bible-catalog.json","./data/bible-rvr1960.json","./assets/icons/icon-192.png","./assets/icons/icon-512.png","./assets/icons/favicon.png"];
+const CACHE="hco-v1.6";
+const ASSETS=["./","./index.html","./manifest.json","./css/app.css","./js/app.js","./js/db.js","./js/router.js","./js/ui.js","./js/hymns.js","./js/bible.js","./js/importers.js","./pages/home.js","./pages/hymns.js","./pages/hymn.js","./pages/bible.js","./pages/settings.js","./data/himnos.json","./data/bible-catalog.json","./data/bible-rvr1960.json","./assets/icons/icon-192.png","./assets/icons/icon-512.png","./assets/icons/favicon.png"];
 self.addEventListener("install",event=>{
   event.waitUntil(
     caches.open(CACHE)
