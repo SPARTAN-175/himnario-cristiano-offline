@@ -1,4 +1,4 @@
-const VERSION="1.6.2";
+const VERSION="1.6.3";
 const CACHE=`himnario-${VERSION}`;
 const ARCHIVOS=[
  "./","./index.html","./manifest.json",
