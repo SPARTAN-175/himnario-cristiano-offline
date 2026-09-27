@@ -1,5 +1,5 @@
-const N="HCO_DB",V=2;let D;
-export function openDB(){return new Promise((ok,no)=>{if(D)return ok(D);const r=indexedDB.open(N,V);r.onupgradeneeded=e=>{const d=e.target.result;for(const [n,k] of [["hymns","id"],["bibleVersions","id"],["bibleBooks","id"],["bibleChapters","id"],["bibleVerses","id"],["notes","id"],["highlights","id"],["studies","id"]])if(!d.objectStoreNames.contains(n))d.createObjectStore(n,{keyPath:k});};r.onsuccess=()=>{D=r.result;ok(D)};r.onerror=()=>no(r.error)})}
+const N="HCO_DB",V=3;let D;
+export function openDB(){return new Promise((ok,no)=>{if(D)return ok(D);const r=indexedDB.open(N,V);r.onupgradeneeded=e=>{const d=e.target.result;for(const [n,k] of [["hymns","id"],["bibleVersions","id"],["bibleBooks","id"],["bibleChapters","id"],["bibleVerses","id"],["notes","id"],["highlights","id"],["studies","id"],["readingState","id"]])if(!d.objectStoreNames.contains(n))d.createObjectStore(n,{keyPath:k});};r.onsuccess=()=>{D=r.result;ok(D)};r.onerror=()=>no(r.error)})}
 export async function all(n){const d=await openDB();return new Promise((ok,no)=>{const r=d.transaction(n).objectStore(n).getAll();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 export async function get(n,k){const d=await openDB();return new Promise((ok,no)=>{const r=d.transaction(n).objectStore(n).get(k);r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})}
 export async function put(n,v){const d=await openDB();return new Promise((ok,no)=>{const r=d.transaction(n,"readwrite").objectStore(n).put(v);r.onsuccess=()=>ok(v);r.onerror=()=>no(r.error)})}

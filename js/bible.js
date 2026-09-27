@@ -1,4 +1,14 @@
-import{all,put,bulk,remove}from"./db.js";
+import{all,put,bulk,remove,get}from"./db.js";
+
+
+const READING_STATE_ID="current";
+export async function saveReadingPosition(v,b,c,verse=1){
+  return put("readingState",{id:READING_STATE_ID,versionId:v,bookId:b,chapter:c,verse});
+}
+export async function getReadingPosition(){
+  return get("readingState",READING_STATE_ID);
+}
+
 const cleanText=s=>String(s??"").replace(/\\n/g,"\n").replace(/\/n/g,"").replace(/\n{3,}/g,"\n\n").trim();
 export {cleanText};
 export const versions=()=>all("bibleVersions");
