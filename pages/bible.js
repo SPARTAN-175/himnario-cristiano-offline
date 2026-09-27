@@ -1,5 +1,5 @@
 import{go}from"../js/router.js";
-import{versions,books,chapter,chapterInfo,saveChapterInfo,notes,note,deleteNote,highlights,highlight,clearHighlight,searchVerses,studies,addVerseToStudy,HIGHLIGHT_COLORS,highlightedVerses}from"../js/bible.js?v=1.3.3";
+import{versions,books,chapter,chapterInfo,saveChapterInfo,notes,note,deleteNote,highlights,highlight,clearHighlight,searchVerses,studies,addVerseToStudy,HIGHLIGHT_COLORS,highlightedVerses}from"../js/bible.js?v=1.5";
 import{shell,nav,esc,toast}from"../js/ui.js";
 const COLORS=HIGHLIGHT_COLORS;
 let currentBookCache=[];
@@ -55,6 +55,6 @@ async function showSavedVerses(ver,bb){
 
 async function addToStudyFlow(v,verse,book,c){
   const a=await studies();let s=null;if(a.length){const choice=prompt(`Escribe el número del tema/predicación:\n${a.map((x,i)=>`${i+1}. ${x.title}`).join("\n")}\n\nDeja vacío para crear uno nuevo.`);if(choice?.trim()){const i=Number(choice)-1;if(a[i])s=a[i]}}
-  if(!s){const title=prompt("Nombre del tema o predicación");if(!title?.trim())return;const type=prompt("Tipo: Tema o Predicación","Predicación")||"Tema";s={id:crypto.randomUUID(),title:title.trim(),type:type.trim(),verses:[]};const {saveStudy}=await import("../js/bible.js?v=1.3.3");await saveStudy(s)}
+  if(!s){const title=prompt("Nombre del tema o predicación");if(!title?.trim())return;const type=prompt("Tipo: Tema o Predicación","Predicación")||"Tema";s={id:crypto.randomUUID(),title:title.trim(),type:type.trim(),verses:[]};const {saveStudy}=await import("../js/bible.js?v=1.5");await saveStudy(s)}
   await addVerseToStudy(s.id,{versionId:v,bookId:book.id.split(":").slice(1).join(":"),bookName:book.name,chapter:c,number:verse.number,text:verse.text});toast("Versículo agregado");
 }
