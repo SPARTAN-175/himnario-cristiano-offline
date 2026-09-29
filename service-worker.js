@@ -1,11 +1,11 @@
-const VERSION="1.6.3";
+const VERSION="1.6.5";
 const CACHE=`himnario-${VERSION}`;
 const ARCHIVOS=[
  "./","./index.html","./manifest.json",
  "./css/app.css",
  "./js/app.js","./js/db.js","./js/hymns.js","./js/bible.js","./js/router.js","./js/ui.js","./js/importers.js",
  "./pages/home.js","./pages/hymns.js","./pages/hymn.js","./pages/bible.js","./pages/settings.js","./pages/studies.js",
- "./data/himnos.json","./data/bible-rvr1960.json",
+ "./data/himnos.json","./data/bible-rvr1960.json","./data/bible-topics.json",
  "./assets/icons/icon-192.png","./assets/icons/icon-512.png","./assets/icons/favicon.png"
 ];
 self.addEventListener("install",event=>{
