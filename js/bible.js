@@ -2,6 +2,7 @@ import{all,put,bulk,remove,get}from"./db.js";
 
 
 const READING_STATE_ID="current";
+const BIBLE_TOPICS_VERSION="topics-1.0-2026-09-28";
 export async function saveReadingPosition(v,b,c,verse=1){
   return put("readingState",{id:READING_STATE_ID,versionId:v,bookId:b,chapter:c,verse});
 }
@@ -32,17 +33,31 @@ export async function seedBundledBible(){
   const current=existing.find(x=>x.id==="rvr1960");
   const chapters=await all("bibleChapters");
   const rvrChapters=chapters.filter(x=>x.versionId==="rvr1960");
-  const topics=rvrChapters.filter(x=>String(x.topic||"").trim()).length;
-  if(current && rvrChapters.length>=1189 && topics>=1103)return false;
-  const res=await fetch("./data/bible-rvr1960.json",{cache:"no-store"});
-  if(!res.ok)throw Error("No se pudo cargar la Biblia integrada");
-  const data=await res.json();
-  await importBible(data);
+  const marker=localStorage.getItem("hco-bible-topics-version");
+  const topicsReady=rvrChapters.length>=1189 && rvrChapters.every(x=>Array.isArray(x.topics)&&x.topics.length);
+  if(!current || rvrChapters.length<1189){
+    const res=await fetch("./data/bible-rvr1960.json",{cache:"no-store"});
+    if(!res.ok)throw Error("No se pudo cargar la Biblia integrada");
+    const data=await res.json();
+    await importBible(data);
+  }
+  if(marker!==BIBLE_TOPICS_VERSION || !topicsReady){
+    const res=await fetch("./data/bible-topics.json",{cache:"no-store"});
+    if(!res.ok)throw Error("No se pudo cargar los temas bíblicos");
+    const data=await res.json();
+    const allChapters=await all("bibleChapters");
+    for(const item of Object.values(data.topics||{})){
+      const id=`rvr1960:${item.bookId}:${item.chapter}`;
+      const currentChapter=allChapters.find(x=>x.id===id);
+      if(currentChapter)await put("bibleChapters",{...currentChapter,topics:item.topics,topic:item.topics?.[0]?.title||currentChapter.topic||""});
+    }
+    localStorage.setItem("hco-bible-topics-version",BIBLE_TOPICS_VERSION);
+  }
   return true;
 }
 
 export async function chapter(v,b,c){return(await all("bibleVerses")).filter(x=>x.versionId===v&&x.bookId===b&&x.chapter===c).sort((a,b)=>a.number-b.number).map(x=>({...x,text:cleanText(x.text)}))}
-export async function chapterInfo(v,b,c){return (await all("bibleChapters")).find(x=>x.id===`${v}:${b}:${c}`)||{id:`${v}:${b}:${c}`,versionId:v,bookId:b,chapter:c,topic:""}}
+export async function chapterInfo(v,b,c){return (await all("bibleChapters")).find(x=>x.id===`${v}:${b}:${c}`)||{id:`${v}:${b}:${c}`,versionId:v,bookId:b,chapter:c,topic:"",topics:[]}}
 export const saveChapterInfo=x=>put("bibleChapters",x);
 export const notes=r=>all("notes").then(a=>a.filter(x=>x.ref===r));
 export const note=n=>put("notes",n);
