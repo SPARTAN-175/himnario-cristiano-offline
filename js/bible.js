@@ -2,7 +2,7 @@ import{all,put,bulk,remove,get}from"./db.js";
 
 
 const READING_STATE_ID="current";
-const BIBLE_TOPICS_VERSION="topics-2.0-2026-10-04";
+const BIBLE_TOPICS_VERSION="topics-3.0-2026-10-04";
 export async function saveReadingPosition(v,b,c,verse=1){
   return put("readingState",{id:READING_STATE_ID,versionId:v,bookId:b,chapter:c,verse});
 }
@@ -34,7 +34,7 @@ export async function seedBundledBible(){
   const chapters=await all("bibleChapters");
   const rvrChapters=chapters.filter(x=>x.versionId==="rvr1960");
   const marker=localStorage.getItem("hco-bible-topics-version");
-  const topicsReady=rvrChapters.length>=1189 && rvrChapters.every(x=>Array.isArray(x.topics)&&x.topics.length);
+  const topicsReady=rvrChapters.length>=1189 && rvrChapters.every(x=>Array.isArray(x.topics));
   if(!current || rvrChapters.length<1189){
     const res=await fetch("./data/bible-rvr1960.json",{cache:"no-store"});
     if(!res.ok)throw Error("No se pudo cargar la Biblia integrada");
