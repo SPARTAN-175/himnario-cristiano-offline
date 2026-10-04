@@ -2,7 +2,7 @@ import{all,put,bulk,remove,get}from"./db.js";
 
 
 const READING_STATE_ID="current";
-const BIBLE_TOPICS_VERSION="topics-1.0-2026-09-28";
+const BIBLE_TOPICS_VERSION="topics-2.0-2026-10-04";
 export async function saveReadingPosition(v,b,c,verse=1){
   return put("readingState",{id:READING_STATE_ID,versionId:v,bookId:b,chapter:c,verse});
 }
