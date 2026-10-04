@@ -1,5 +1,5 @@
 import{go}from"../js/router.js";
-import{versions,books,chapter,chapterInfo,saveChapterInfo,notes,note,deleteNote,highlights,highlight,clearHighlight,searchVerses,studies,addVerseToStudy,HIGHLIGHT_COLORS,highlightedVerses,getReadingPosition,saveReadingPosition}from"../js/bible.js?v=1.6.5";
+import{versions,books,chapter,chapterInfo,saveChapterInfo,notes,note,deleteNote,highlights,highlight,clearHighlight,searchVerses,studies,addVerseToStudy,HIGHLIGHT_COLORS,highlightedVerses,getReadingPosition,saveReadingPosition}from"../js/bible.js?v=1.6.7";
 import{shell,nav,esc,toast}from"../js/ui.js";
 const COLORS=HIGHLIGHT_COLORS;
 let currentBookCache=[];
@@ -37,12 +37,12 @@ async function read(v,b,c,book,focusVerse=null){
   document.querySelector(".app")?.classList.add("reader-mode");
   const topicsByVerse=new Map();
   (ci.topics||[]).forEach(t=>{
-    const verse=Number(t.from);
+    const verse=Number(t.verse ?? t.from);
     if(!Number.isFinite(verse))return;
     if(!topicsByVerse.has(verse))topicsByVerse.set(verse,[]);
     topicsByVerse.get(verse).push(t);
   });
-  const topicFallback=(!ci.topics?.length&&ci.topic)?[{title:ci.topic,from:1}]:[];
+  const topicFallback=(!ci.topics?.length&&ci.topic)?[{title:ci.topic,verse:1}]:[];
   if(topicFallback.length)topicsByVerse.set(1,topicFallback);
   const renderTopic=(t)=>`<div class="verse-topic" style="margin:22px 0 8px;padding:10px 14px;border-left:4px solid #23406A;background:#eef3f9;border-radius:8px;font-weight:700;color:#23406A"><span>${esc(t.title)}</span></div>`;
   view.innerHTML=`<div class="bible-reader"><div class="reader-toolbar"><button class="reader-icon" id="back" aria-label="Volver">‹</button><button class="version-pill" id="version-pill">${esc(v)}</button><div class="reader-toolbar-right"><button class="reader-icon" id="reader-search" aria-label="Buscar">⌕</button><button class="reader-icon" id="reader-more" aria-label="Más opciones">•••</button></div></div><div class="reader-book">${esc(book.name).toUpperCase()}</div><div class="reader-rule"></div><div class="reader-actions"><span>Capítulo ${c}</span><span>Mantén presionado un versículo para marcarlo</span></div><div class="scripture">${a.map(x=>{const h=map.get(x.number),n=notesMap.get(x.number),topics=topicsByVerse.get(x.number)||[];return`${topics.map(renderTopic).join("")}<div id="verse-${x.number}" class="verse-row ${h?"is-highlighted":""}" style="${h?`--highlight:${COLORS.find(z=>z.id===h.color)?.hex||"#fde68a"}`:""}" data-verse-row="${x.number}"><span class="verse-num">${x.number}</span> <span class="verse-text">${esc(x.text)}</span><div class="verse-tools"><button class="comment" data-note="${x.number}">${n?"✎ Editar comentario":"＋ Comentario"}</button></div>${n?`<div class="verse-note"><strong>Comentario:</strong> ${esc(n.text)} <button class="note-delete" data-note-delete="${n.id}">Eliminar</button></div>`:""}</div>`}).join("")}</div><div class="chapter-pager"><button class="pager-btn" id="prev-chapter" aria-label="Capítulo anterior">‹</button><div><small>${esc(book.name)}</small><strong>${c}</strong></div><button class="pager-btn" id="next-chapter" aria-label="Capítulo siguiente">›</button></div></div>`;
