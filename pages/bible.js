@@ -1,6 +1,6 @@
 import{go}from"../js/router.js";
 import{versions,books,chapter,chapterInfo,saveChapterInfo,notes,note,deleteNote,highlights,highlight,clearHighlight,searchVerses,studies,addVerseToStudy,HIGHLIGHT_COLORS,highlightedVerses,getReadingPosition,saveReadingPosition}from"../js/bible.js?v=1.6.7";
-import{shell,nav,esc,toast}from"../js/ui.js";
+import{shell,nav,esc,toast,appPrompt}from"../js/ui.js";
 const COLORS=HIGHLIGHT_COLORS;
 let currentBookCache=[];
 export async function bible(){
@@ -47,7 +47,7 @@ async function read(v,b,c,book,focusVerse=null){
   const renderTopic=(t)=>`<div class="verse-topic" style="margin:22px 0 8px;padding:10px 14px;border-left:4px solid #23406A;background:#eef3f9;border-radius:8px;font-weight:700;color:#23406A"><span>${esc(t.title)}</span></div>`;
   view.innerHTML=`<div class="bible-reader"><div class="reader-toolbar"><button class="reader-icon" id="back" aria-label="Volver">‹</button><button class="version-pill" id="version-pill">${esc(v)}</button><div class="reader-toolbar-right"><button class="reader-icon" id="reader-search" aria-label="Buscar">⌕</button><button class="reader-icon" id="reader-more" aria-label="Más opciones">•••</button></div></div><div class="reader-book">${esc(book.name).toUpperCase()}</div><div class="reader-rule"></div><div class="reader-actions"><span>Capítulo ${c}</span><span>Mantén presionado un versículo para marcarlo</span></div><div class="scripture">${a.map(x=>{const h=map.get(x.number),n=notesMap.get(x.number),topics=topicsByVerse.get(x.number)||[];return`${topics.map(renderTopic).join("")}<div id="verse-${x.number}" class="verse-row ${h?"is-highlighted":""}" style="${h?`--highlight:${COLORS.find(z=>z.id===h.color)?.hex||"#fde68a"}`:""}" data-verse-row="${x.number}"><span class="verse-num">${x.number}</span> <span class="verse-text">${esc(x.text)}</span><div class="verse-tools"><button class="comment" data-note="${x.number}">${n?"✎ Editar comentario":"＋ Comentario"}</button></div>${n?`<div class="verse-note"><strong>Comentario:</strong> ${esc(n.text)} <button class="note-delete" data-note-delete="${n.id}">Eliminar</button></div>`:""}</div>`}).join("")}</div><div class="chapter-pager"><button class="pager-btn" id="prev-chapter" aria-label="Capítulo anterior">‹</button><div><small>${esc(book.name)}</small><strong>${c}</strong></div><button class="pager-btn" id="next-chapter" aria-label="Capítulo siguiente">›</button></div></div>`;
   document.getElementById("back").onclick=()=>pick(v,b,book);
-  document.getElementById("reader-search").onclick=()=>{const q=prompt("Buscar en la Biblia","");if(q?.trim()){go("bible").then(()=>{const input=document.getElementById("verse-search");if(input){input.value=q.trim();input.dispatchEvent(new Event("input"))}})}};
+  document.getElementById("reader-search").onclick=()=>{const q=await appPrompt("Buscar en la Biblia","Escribe el texto o referencia que quieres buscar.");if(q?.trim()){go("bible").then(()=>{const input=document.getElementById("verse-search");if(input){input.value=q.trim();input.dispatchEvent(new Event("input"))}})}};
   document.getElementById("reader-more").onclick=()=>openVerseMenu({v,b,c,book,verse:a.find(x=>x.number===focusVerse)||a[0],current:map.get(focusVerse||a[0]?.number)});
   const idx=book.chapters.findIndex(x=>x.number===c);
   document.getElementById("prev-chapter").onclick=()=>{
@@ -74,7 +74,7 @@ async function read(v,b,c,book,focusVerse=null){
       read(v,nextBook.id.split(":").slice(1).join(":"),first.number,nextBook);
     }
   };
-  document.querySelectorAll("[data-note]").forEach(btn=>btn.onclick=async()=>{const num=+btn.dataset.note,old=notesMap.get(num);const t=prompt("Comentario para este versículo",old?.text||"");if(t===null)return;if(t.trim()){await note({id:old?.id||crypto.randomUUID(),ref,text:t.trim(),verse:num});toast("Comentario guardado");read(v,b,c,book,focusVerse||num)}else if(old){await deleteNote(old.id);toast("Comentario eliminado");read(v,b,c,book,focusVerse||num)}});
+  document.querySelectorAll("[data-note]").forEach(btn=>btn.onclick=async()=>{const num=+btn.dataset.note,old=notesMap.get(num);const t=await appPrompt("Comentario para este versículo","Escribe tu comentario. Déjalo vacío para eliminar el comentario actual.",old?.text||"",{multiline:true});if(t===null)return;if(t.trim()){await note({id:old?.id||crypto.randomUUID(),ref,text:t.trim(),verse:num});toast("Comentario guardado");read(v,b,c,book,focusVerse||num)}else if(old){await deleteNote(old.id);toast("Comentario eliminado");read(v,b,c,book,focusVerse||num)}});
   document.querySelectorAll("[data-note-delete]").forEach(btn=>btn.onclick=async()=>{await deleteNote(btn.dataset.noteDelete);toast("Comentario eliminado");read(v,b,c,book,focusVerse)});
   document.querySelectorAll("[data-verse-row]").forEach(row=>installLongPress(row,async()=>openVerseMenu({v,b,c,book,verse:a.find(x=>x.number===+row.dataset.verseRow),current:map.get(+row.dataset.verseRow)})));
   if(focusVerse){requestAnimationFrame(()=>document.getElementById(`verse-${focusVerse}`)?.scrollIntoView({block:"center"}))}
@@ -96,7 +96,7 @@ async function showSavedVerses(ver,bb){
 }
 
 async function addToStudyFlow(v,verse,book,c){
-  const a=await studies();let s=null;if(a.length){const choice=prompt(`Escribe el número del tema/predicación:\n${a.map((x,i)=>`${i+1}. ${x.title}`).join("\n")}\n\nDeja vacío para crear uno nuevo.`);if(choice?.trim()){const i=Number(choice)-1;if(a[i])s=a[i]}}
-  if(!s){const title=prompt("Nombre del tema o predicación");if(!title?.trim())return;const type=prompt("Tipo: Tema o Predicación","Predicación")||"Tema";s={id:crypto.randomUUID(),title:title.trim(),type:type.trim(),verses:[]};const {saveStudy}=await import("../js/bible.js?v=1.6.5");await saveStudy(s)}
+  const a=await studies();let s=null;if(a.length){const choice=await appPrompt("Agregar a tema o predicación",`Escribe el número correspondiente.\n\n${a.map((x,i)=>`${i+1}. ${x.title}`).join("\n")}\n\nDéjalo vacío para crear uno nuevo.`);if(choice?.trim()){const i=Number(choice)-1;if(a[i])s=a[i]}}
+  if(!s){const title=await appPrompt("Nuevo tema o predicación","Escribe un nombre para guardarlo.");if(!title?.trim())return;const type=await appPrompt("Tipo","Escribe Tema o Predicación.","Predicación")||"Tema";s={id:crypto.randomUUID(),title:title.trim(),type:type.trim(),verses:[]};const {saveStudy}=await import("../js/bible.js?v=1.6.5");await saveStudy(s)}
   await addVerseToStudy(s.id,{versionId:v,bookId:book.id.split(":").slice(1).join(":"),bookName:book.name,chapter:c,number:verse.number,text:verse.text});toast("Versículo agregado");
 }
